@@ -4,8 +4,45 @@ import Title from "./Title"
 import styled from "styled-components"
 import Image from "gatsby-image"
 import SearchButtons from "./SearchButtons"
-const Projects = () => {
-  return <h2>projects component</h2>
+const Projects = ({ projects:data, title, page }) => {
+  // lets define a state variable
+  const [projects, setProjects] = React.useState(data);
+  // more logic
+
+  return (
+    <Wrapper className="section">
+      <Title title={title || "projects"} />
+      {/* search buttons go here */}
+      <div className="section-center">
+        {projects.map((item) => {
+          // console.log(item)
+          const {id} = item;
+          const {name, type} = item.data;
+          const fluid = item.data.image.localFiles[0].childImageSharp.fluid;
+          return (
+            <article key={id}>
+              <div className="container">
+                <Image fluid={fluid} className="img" />
+                <div className="info">
+                  <p>- {type} -</p>
+                  <h3>{name}</h3>
+                </div>
+              </div>
+            </article>
+          )
+        })}
+      </div>
+      {/* We want to see the Button only on the HomePage. After we click on the Button and we go to the Projets
+          page we should not see any buttons. That is wy we added a prop to the  Projects = ({ projects:data, title, page }) 
+          But the same prop is not passed in the index.js*/}
+      {
+        !page && 
+        <Link to="/projects" className="btn">
+          all projects
+        </Link>
+      }
+    </Wrapper>
+  )
 }
 
 const Wrapper = styled.section`
