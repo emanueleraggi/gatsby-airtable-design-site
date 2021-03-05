@@ -78,3 +78,7 @@ require("dotenv").config({
 ## Algolia
 
 [algolia](https://www.algolia.com/);
+
+## Added a development branch for additional testing
+
+Added main_dev
