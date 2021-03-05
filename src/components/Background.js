@@ -20,20 +20,21 @@ const query = graphql`
 
 
 
-const Background = ({ children }) => {
+const Background = ({ children, image }) => {
+  // console.log(children, image);
   const {
     file:{
       childImageSharp: { fluid },
     },
   } = useStaticQuery(query);
-  console.log(fluid);
+  // console.log(fluid);
 
 
   return (
     <Wrapper>
       <BackgroundImage 
         Tag="div" 
-        fluid={fluid} 
+        fluid={image || fluid} 
         className="bcg"
         preserveStackingContext={true}
         >{children}
@@ -44,7 +45,7 @@ const Background = ({ children }) => {
 
 const fadeIn = keyframes`
       from{
-         background-color:rgb(0,0,0,0.8);
+        background-color:rgb(0,0,0,0.8);
       }
       to{
         background-color:rgba(0,0,0,0.4);

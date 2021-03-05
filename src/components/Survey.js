@@ -3,11 +3,89 @@ import Title from "./Title"
 import styled from "styled-components"
 import base from "./Airtable"
 import { FaVoteYea } from "react-icons/fa"
+import { useStaticQuery } from "gatsby"
+
+// console.log(base)
+// let's set up 2 states variables: 1 for loading and 1 for the items
+
 
 const Survey = () => {
+  const [items, setItems] = React.useState([]);
+  const [loading, setLoading] = useState(true);
+
+    const getRecords = async () => {
+      const records = await base('Survey').select({}).firstPage().catch(err => console.log(err));
+      // console.log(records);
+      const newRecords = records.map((record) => {
+        // lets destructure to get the id and fields
+        const {id, fields} = record;
+        return {id, fields};
+      })
+      setItems(newRecords);
+      setLoading(false);
+    }
+
+  const giveVote = async id => {
+    setLoading(true);
+    const tempItems = [...items].map((item) => {
+      if(item.id === id) {
+        let {id, fields} = item;
+        fields = {...fields, votes:fields.votes+1}
+        return {id, fields}
+
+      } else {
+        return item;
+      }
+    })
+
+    const records = await base('Survey').update(tempItems).catch(err => console.log(err));
+      const newRecords = records.map((record) => {
+        // lets destructure to get the id and fields
+        const {id, fields} = record;
+        return {id, fields};
+      })
+      setItems(newRecords);
+      setLoading(false);
+  }
+
+  useEffect(() => {
+    getRecords();
+    // console.log(items)
+  },[])
+
   return (
-    <Wrapper>
-      <Title title="Survey" />
+    <Wrapper className="section">
+      <div className="container">
+        <Title title="Survey" />
+        <h3>most important room in the house?</h3>
+        {loading ? (
+          <h3>loading...</h3>
+          ) : (
+          <ul>
+            {items.map(item => {
+              // console.log(items);
+              const {
+                id, 
+                fields: { name, votes },
+              } =item;
+
+              return (
+                <li ley={id}>
+                  <div className="key">
+                    {name.toUpperCase().substring(0,2)}
+                  </div>
+                  <div>
+                    <h4>{name}</h4>
+                    <p>{votes} votes</p>
+                  </div>
+                  <button onClick={() => giveVote(id)}>
+                    <FaVoteYea />
+                  </button>
+                </li>
+              )
+            })}
+          </ul>)}
+      </div>
     </Wrapper>
   )
 }

@@ -1,8 +1,59 @@
 import React from "react"
 import styled from "styled-components"
 
-const SearchButtons = () => {
-  return <h2>search buttons</h2>
+const SearchButtons = ({ projects, setProjects, setBackToAll}) => {
+  const [index, setIndex] = React.useState(0);
+
+  // -------------------------------------------------------
+  // Below map is correct, however the console.log(type)
+  // return all the values in the tables for a total of 6 items:
+  // bedroom, bathroom, bathroom, bathroom, kitchen, kitchen
+  // But we would like ony one of each so that we could translate these 
+  // values into Buttons
+
+  // const types = projects.map((project) =>{
+  //   console.log(types)
+  //   return project.data.type
+  // })
+  // console.log(types)
+
+  // -----------------------------------------------------------
+  // In this way we translate the choices into Buttons \
+  // via new Set(.......)
+
+    const types = ['all', ...new Set(projects.map((project) =>{
+    // console.log(types)
+    return project.data.type
+  }))]
+  // console.log(types)
+
+
+  const showProjects = (type, typeIndex) => {
+    setIndex(typeIndex);
+    if(type === "all") {
+      setBackToAll();
+    } else {
+      const tempProject = projects.filter(project => project.data.type === type);
+      setProjects(tempProject);
+    }
+  }
+
+
+  return (
+    <Wrapper>
+      {
+        types.map((type, typeIndex) => {
+          return (
+            <button 
+              key={typeIndex} 
+              className={index === typeIndex ? 'active' : undefined}
+              onClick={() => showProjects(type, typeIndex)}  
+            >{type}</button>
+          )
+        })
+      }
+    </Wrapper>
+  )
 }
 const Wrapper = styled.section`
   display: flex;
